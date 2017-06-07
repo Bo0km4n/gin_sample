@@ -8,3 +8,7 @@ import (
 func Hello(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Hello world!"})
 }
+
+func World(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, gin.H{"message": "World is beautiful"})
+}

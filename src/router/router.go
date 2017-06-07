@@ -1,7 +1,7 @@
 package router
 
 import (
-	sample "api/v1"
+	sample "api/v1/sample"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,6 +10,7 @@ func V1(api *gin.Engine) *gin.Engine {
 	{
 		test := v1.Group("/test")
 		test.GET("/sample", sample.Hello)
+		test.GET("/world",  sample.World)
 	}
 
 	return api

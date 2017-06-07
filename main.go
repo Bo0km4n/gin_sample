@@ -24,7 +24,7 @@ func init() {
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Println("config error", err)
 	}
-
+	
 }
 
 func main() {
