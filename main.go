@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 	"net/http"
 	"router"
+	"db"
 )
 
 var env = flag.String("e", "dev", "環境変数")
@@ -28,6 +29,7 @@ func init() {
 }
 
 func main() {
+	fmt.Println("HelloWorld")
 	api := gin.New()
 	api.Use(gin.Recovery())
 
@@ -38,6 +40,8 @@ func main() {
 		Addr:    viper.GetString("port"),
 		Handler: api,
 	}
+
+	db.MySQL()
 
 	gracehttp.Serve(server)
 }

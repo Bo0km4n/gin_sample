@@ -1,10 +1,9 @@
 package db
 
 import (
+	"fmt"
 	"database/sql"
-	"github.com/coopernurse/gorp"
 	_ "github.com/go-sql-driver/mysql"
-	"log"
 )
 
 type User struct {
@@ -12,21 +11,50 @@ type User struct {
 	Name string `db:"name" json:"name"`
 }
 
-func NewDbMap(dsn string) *gorp.DbMap {
-	db, err := sql.Open("mysql", dsn)
-	
+func MySQL() {
+	db, err := sql.Open("mysql", "root:@/test")
 	if err != nil {
-		log.Fatalln("sql.Open failed")
-	}
+    	panic(err.Error())
+  	}
+  	defer db.Close() // 関数がリターンする直前に呼び出される
 
-	return &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
+	rows, err := db.Query("SELECT * FROM users") // 
+  	if err != nil {
+    	panic(err.Error())
+  	}
+
+	columns, err := rows.Columns() // カラム名を取得
+  	if err != nil {
+    	panic(err.Error())
+  	}
+
+	values := make([]sql.RawBytes, len(columns))
+
+  	//  rows.Scan は引数に `[]interface{}`が必要.
+
+  	scanArgs := make([]interface{}, len(values))
+  	for i := range values {
+    	scanArgs[i] = &values[i]
+  	}
+
+  	for rows.Next() {
+    	err = rows.Scan(scanArgs...)
+    	if err != nil {
+      		panic(err.Error())
+    	}
+
+		var value string
+    	for i, col := range values {
+      		// Here we can check if the value is nil (NULL value)
+      		if col == nil {
+        	value = "NULL"
+      		} else {
+        		value = string(col)
+      		}
+      		fmt.Println(columns[i], ": ", value)
+    	}	
+    	fmt.Println("-----------------------------------")
+	}	
 }
 
-func CreateUserTable(dbmap *gorp.DbMap) {
-	dbmap.AddTableWithName(User{}, "users").SetKeys(true, "Id")
-	err := dbmap.CreateTables()
 
-	if err != nil {
-		panic(err)
-	}
-}

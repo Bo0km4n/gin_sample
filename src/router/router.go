@@ -10,6 +10,7 @@ func V1(api *gin.Engine) *gin.Engine {
 	{
 		test := v1.Group("/test")
 		test.GET("/sample", sample.Hello)
+		test.POST("/sample", sample.Post)
 		test.GET("/world",  sample.World)
 		test.GET("/issue01",sample.Issue01)
 	}
